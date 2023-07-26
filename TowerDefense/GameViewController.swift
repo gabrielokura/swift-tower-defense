@@ -6,11 +6,30 @@
 //
 
 import UIKit
-import QuartzCore
 import SceneKit
+import Combine
+import SwiftUI
 
-class GameViewController: UIViewController {
+struct GameLevelViewRepresentable: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> some UIViewController {
+        return GameSceneController()
+    }
+    
+    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
+}
+
+
+class GameSceneController: UIViewController {
     var sceneView: SCNView!
+    
+    private var initialCameraPosition: SCNVector3!
+    private var initialCameraRotation: SCNVector4!
+    
+    var cameraNode: SCNNode!
+    var scene: SCNScene!
+    
+    var manager: Manager = Manager.instance
+    var cancellableBag = Set<AnyCancellable>()
     
     override func loadView() {
         super.loadView()
@@ -20,76 +39,61 @@ class GameViewController: UIViewController {
         
         self.sceneView = view
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // create a new scene
         let scene = SCNScene(named: "art.scnassets/GameLevel.scn")!
-        
-        // set the scene to the view
         self.sceneView.scene = scene
+        self.scene = scene
         
-        // allows the user to manipulate the camera
-        self.sceneView.allowsCameraControl = true
-        
-        // show statistics such as fps and timing information
         self.sceneView.showsStatistics = true
         
-        // configure the view
-        self.sceneView.backgroundColor = UIColor.black
-        
-        // add a tap gesture recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        self.sceneView.addGestureRecognizer(tapGesture)
+        self.setupCamera()
+        self.setupBackground()
+        self.subscribeToFixedCameraEvents()
+        self.subscribeToActions()
+        self.setupAliens()
     }
     
-    @objc
-    func handleTap(_ gestureRecognize: UIGestureRecognizer) {
-        // retrieve the SCNView
-        let scnView = self.view as! SCNView
-        
-        // check what nodes are tapped
-        let p = gestureRecognize.location(in: scnView)
-        let hitResults = scnView.hitTest(p, options: [:])
-        // check that we clicked on at least one object
-        if hitResults.count > 0 {
-            // retrieved the first clicked object
-            let result = hitResults[0]
-            
-            // get its material
-            let material = result.node.geometry!.firstMaterial!
-            
-            // highlight it
-            SCNTransaction.begin()
-            SCNTransaction.animationDuration = 0.5
-            
-            // on completion - unhighlight
-            SCNTransaction.completionBlock = {
-                SCNTransaction.begin()
-                SCNTransaction.animationDuration = 0.5
-                
-                material.emission.contents = UIColor.black
-                
-                SCNTransaction.commit()
+    private func subscribeToFixedCameraEvents() {
+        manager.$isCameraFixed.sink { value in
+            self.sceneView.allowsCameraControl = !value
+        }.store(in: &cancellableBag)
+    }
+    
+    private func subscribeToActions() {
+        manager.actionStream.sink { action in
+            switch action {
+            case .returnCamera:
+                self.returnCameraToInitialPosition()
+            default:
+                print("dont do anything")
             }
-            
-            material.emission.contents = UIColor.red
-            
-            SCNTransaction.commit()
-        }
+        }.store(in: &cancellableBag)
     }
     
-    override var prefersStatusBarHidden: Bool {
-        return true
+    private func setupCamera() {
+        cameraNode = self.scene.rootNode.childNode(withName: "camera", recursively: false)
+        
+        initialCameraPosition = cameraNode!.position
+        initialCameraRotation = cameraNode!.rotation
     }
     
-    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        if UIDevice.current.userInterfaceIdiom == .phone {
-            return .allButUpsideDown
-        } else {
-            return .all
-        }
+    private func setupBackground() {
+        let skyboxImages = [UIImage(named: "space_rt"),
+                            UIImage(named: "space_lf"),
+                            UIImage(named: "space_up"),
+                            UIImage(named: "space_dn"),
+                            UIImage(named: "space_ft"),
+                            UIImage(named: "space_bk")]
+        
+        self.scene.background.contents = skyboxImages
     }
-
+    
+    func returnCameraToInitialPosition() {
+        cameraNode.position = initialCameraPosition
+        cameraNode.rotation = initialCameraRotation
+        self.sceneView.pointOfView = cameraNode
+    }
 }
