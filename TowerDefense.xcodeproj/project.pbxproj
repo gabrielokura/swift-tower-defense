@@ -14,6 +14,7 @@
 		7C24512B2A701061002F03DD /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C24512A2A701061002F03DD /* ContentView.swift */; };
 		7C24512E2A7010B5002F03DD /* GameLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C24512D2A7010B5002F03DD /* GameLevelView.swift */; };
 		7CE7F0D82A714D14004D839C /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE7F0D72A714D14004D839C /* GameManager.swift */; };
+		7CE7F0DA2A715AEA004D839C /* Alien.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE7F0D92A715AEA004D839C /* Alien.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		7C24512A2A701061002F03DD /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7C24512D2A7010B5002F03DD /* GameLevelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLevelView.swift; sourceTree = "<group>"; };
 		7CE7F0D72A714D14004D839C /* GameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
+		7CE7F0D92A715AEA004D839C /* Alien.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alien.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 				7C2451282A701037002F03DD /* MyApp.swift */,
 				7C24512A2A701061002F03DD /* ContentView.swift */,
 				7CE7F0D72A714D14004D839C /* GameManager.swift */,
+				7CE7F0D92A715AEA004D839C /* Alien.swift */,
 			);
 			path = TowerDefense;
 			sourceTree = "<group>";
@@ -149,6 +152,7 @@
 				7C24511A2A700FA3002F03DD /* GameViewController.swift in Sources */,
 				7C24512B2A701061002F03DD /* ContentView.swift in Sources */,
 				7C2451292A701037002F03DD /* MyApp.swift in Sources */,
+				7CE7F0DA2A715AEA004D839C /* Alien.swift in Sources */,
 				7C24512E2A7010B5002F03DD /* GameLevelView.swift in Sources */,
 				7CE7F0D82A714D14004D839C /* GameManager.swift in Sources */,
 			);

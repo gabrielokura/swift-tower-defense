@@ -48,6 +48,7 @@ class GameSceneController: UIViewController {
         self.scene = scene
         
         self.sceneView.showsStatistics = true
+        self.sceneView.debugOptions = [.showConstraints, .showSkeletons]
         
         self.setupCamera()
         self.setupBackground()
@@ -95,5 +96,11 @@ class GameSceneController: UIViewController {
         cameraNode.position = initialCameraPosition
         cameraNode.rotation = initialCameraRotation
         self.sceneView.pointOfView = cameraNode
+    }
+    
+    func setupAliens() {
+        let alien = Alien(of: .purple, in: self.scene.rootNode)
+        
+        sceneView.scene?.rootNode.addChildNode(alien.node)
     }
 }
