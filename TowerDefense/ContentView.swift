@@ -8,9 +8,18 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject var manager = Manager.instance
+    
     var body: some View {
         ZStack {
-            GameLevelView()
+            GameLevelView(manager: manager)
         }
+    }
+}
+
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
     }
 }

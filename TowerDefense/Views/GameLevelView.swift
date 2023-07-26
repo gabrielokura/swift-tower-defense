@@ -9,21 +9,43 @@ import SwiftUI
 import SceneKit
 
 struct GameLevelView: View {
+    @ObservedObject var manager: Manager
+    
     var body: some View {
-        GameLevelViewRepresentable()
+        ZStack {
+            GameLevelViewRepresentable()
+            .ignoresSafeArea()
+            
+            HStack(spacing: 24) {
+                fixCameraButton
+                returnCameraPositionButton
+            }
+            .padding(.trailing, 56)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+        }
+    }
+    
+    var fixCameraButton: some View {
+        Image(systemName: manager.isCameraFixed ? "mappin.slash.circle" :  "mappin.circle")
+            .font(.largeTitle)
+            .foregroundColor(.white)
+            .onTapGesture {
+                manager.isCameraFixed.toggle()
+            }
+    }
+    
+    var returnCameraPositionButton: some View {
+        Image(systemName: "camera.circle")
+            .font(.largeTitle)
+            .foregroundColor(.white)
+            .onTapGesture {
+                manager.returnCameraToInitialPosition()
+            }
     }
 }
 
 struct GameLevelView_Previews: PreviewProvider {
     static var previews: some View {
-        GameLevelView()
+        GameLevelView(manager: Manager.instance)
     }
-}
-
-struct GameLevelViewRepresentable: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> some UIViewController {
-        return GameViewController()
-    }
-    
-    func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {}
 }
