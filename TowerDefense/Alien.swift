@@ -9,6 +9,27 @@ import SceneKit
 
 enum AlienType {
     case purple
+    
+    var health: Int {
+        switch self {
+        case .purple:
+            return 100
+        }
+    }
+    
+    var initialPosition: SCNVector3 {
+        switch self {
+        case .purple:
+            return SCNVector3(5, 1, -10)
+        }
+    }
+    
+    var pathNodeName: String {
+        switch self {
+        case .purple:
+            return "purple_path"
+        }
+    }
 }
 
 class Alien {
@@ -18,8 +39,8 @@ class Alien {
     var path: [SCNVector3] = []
     var sceneNode: SCNNode!
     
-    var fullHealth = 100
-    var health = 100
+    var fullHealth: Int!
+    var health: Int!
     
     init(of type: AlienType!, in sceneNode: SCNNode!) {
         guard let alienScene = SCNScene(named: "art.scnassets/enemy_ufoPurple.scn") else {
@@ -34,16 +55,14 @@ class Alien {
         self.lifeNode = alienNode.childNode(withName: "life", recursively: false)
         self.lifeNode.pivot = SCNMatrix4MakeTranslation(-0.5, 0, 0)
         self.lifeNode.position = SCNVector3(-0.5, 0.5, 0)
+        self.lifeNode.isHidden = true
         self.sceneNode = sceneNode
+        
+        self.fullHealth = type.health
+        self.health = type.health
 
-        switch type {
-        case .purple:
-            self.node.position = SCNVector3(5, 1, -10)
-            self.path = setupPath()
-            
-        default:
-            print("invalid alien")
-        }
+        self.node.position = type.initialPosition
+        self.path = setupPath()
         
         startMovement()
     }
@@ -53,15 +72,8 @@ class Alien {
     }
     
     func setupPath() -> [SCNVector3]{
-        var pathNodeName = ""
+        var pathNodeName = type.pathNodeName
         var result: [SCNVector3] = []
-        
-        switch type {
-        case .purple:
-            pathNodeName = "purple_path"
-        default:
-            return []
-        }
         
         guard let pathNode = sceneNode.childNode(withName: pathNodeName, recursively: false) else {
             return []
@@ -84,14 +96,15 @@ class Alien {
         let sequence = SCNAction.sequence(moveActions)
         
         node.runAction(sequence) {
-            print("finalizou movimento")
-            self.takeDamage(40)
+            print("finalizou movimento -> explodir alien")
+            self.takeDamage(self.health)
         }
     }
     
     func takeDamage(_ damage: Int) {
         health = max(health - damage, 0)
         
+        lifeNode.isHidden = false
         let healthScale = Float(health)/Float(fullHealth)
         lifeNode.scale.x = healthScale
     }
