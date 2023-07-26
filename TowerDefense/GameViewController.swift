@@ -44,10 +44,6 @@ class GameViewController: UIViewController {
         self.sceneView.addGestureRecognizer(tapGesture)
     }
     
-    git remote add origin ssh-url
-    git branch -M main
-    git push -u origin main
-    
     @objc
     func handleTap(_ gestureRecognize: UIGestureRecognizer) {
         // retrieve the SCNView
