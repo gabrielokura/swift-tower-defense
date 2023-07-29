@@ -14,9 +14,10 @@ struct GameLevelView: View {
     var body: some View {
         ZStack {
             GameLevelViewRepresentable()
-            .ignoresSafeArea()
+                .ignoresSafeArea()
             
             HStack(spacing: 24) {
+                editTerrainButton
                 fixCameraButton
                 returnCameraPositionButton
             }
@@ -40,6 +41,15 @@ struct GameLevelView: View {
             .foregroundColor(.white)
             .onTapGesture {
                 manager.returnCameraToInitialPosition()
+            }
+    }
+    
+    var editTerrainButton: some View {
+        Image(systemName: manager.isEditingTerrain ? "square.and.pencil.circle.fill" : "square.and.pencil.circle")
+            .font(.largeTitle)
+            .foregroundColor(.white)
+            .onTapGesture {
+                manager.editTerrain()
             }
     }
 }

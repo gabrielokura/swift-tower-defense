@@ -31,6 +31,8 @@ class GameSceneController: UIViewController {
     var manager: Manager = Manager.instance
     var cancellableBag = Set<AnyCancellable>()
     
+    var terrain: Terrain!
+    
     override func loadView() {
         super.loadView()
         
@@ -55,6 +57,10 @@ class GameSceneController: UIViewController {
         self.subscribeToFixedCameraEvents()
         self.subscribeToActions()
         self.setupAliens()
+        self.setupTerrain()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
+        self.sceneView.addGestureRecognizer(tapGesture)
     }
     
     private func subscribeToFixedCameraEvents() {
@@ -68,6 +74,10 @@ class GameSceneController: UIViewController {
             switch action {
             case .returnCamera:
                 self.returnCameraToInitialPosition()
+            case .startEditing:
+                self.terrain.startEditing()
+            case .finishEditing:
+                self.terrain.finishEditing()
             default:
                 print("dont do anything")
             }
@@ -102,5 +112,27 @@ class GameSceneController: UIViewController {
         let alien = Alien(of: .purple, in: self.scene.rootNode)
         
         sceneView.scene?.rootNode.addChildNode(alien.node)
+    }
+    
+    func setupTerrain() {
+        terrain = Terrain(in: self.scene.rootNode)
+    }
+    
+    @objc func handleTap(_ gestureRecognize: UIGestureRecognizer) {
+        // check what nodes are tapped
+        let p = gestureRecognize.location(in: sceneView)
+        let hitResults = sceneView.hitTest(p, options: [:])
+        // check that we clicked on at least one object
+        if hitResults.count > 0 {
+            // retrieved the first clicked object
+            let result: SCNHitTestResult = hitResults[0]
+            let name = result.node.parent?.name
+            
+            if (name != nil && name!.contains("editable")) {
+                terrain.tapOnTerrain(node: result.node)
+            }
+//            print(result.textureCoordinates(withMappingChannel 0)) // This line is added here.
+//            print("x: \(p.x) y: \(p.y)") // <--- THIS IS WHERE I PRINT THE COORDINATES
+        }
     }
 }

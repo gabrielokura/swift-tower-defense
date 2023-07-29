@@ -9,18 +9,25 @@ import Foundation
 import Combine
 
 enum GameActions {
-    case start, returnCamera
+    case start, returnCamera, startEditing, finishEditing
 }
 
 class Manager: ObservableObject {
     static var instance = Manager()
     
     @Published var isCameraFixed: Bool = false
+    @Published var isEditingTerrain: Bool = false
+    
     var actionStream = PassthroughSubject<GameActions, Never>()
     
     func returnCameraToInitialPosition() {
         isCameraFixed = true
         actionStream.send(.returnCamera)
+    }
+    
+    func editTerrain() {
+        isEditingTerrain.toggle()
+        actionStream.send(isEditingTerrain ? .startEditing : .finishEditing)
     }
     
 }
