@@ -117,6 +117,10 @@ class Alien: SCNNode {
     func takeDamage(_ damage: Int) {
         health = max(health - damage, 0)
         
+        if health == 0 {
+            self.removeFromParentNode()
+        }
+        
         lifeNode.isHidden = false
         let healthScale = Float(health)/Float(fullHealth)
         lifeNode.scale.x = healthScale

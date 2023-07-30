@@ -112,6 +112,10 @@ class GameSceneController: UIViewController {
     func setupAliens() {
         let alien = Alien.create(.purple, in: self.scene.rootNode)!
         sceneView.scene?.rootNode.addChildNode(alien)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { // remove/replace ship after half a second to visualize collision
+            self.setupAliens()
+        })
     }
     
     func setupTerrain() {
@@ -141,30 +145,12 @@ class GameSceneController: UIViewController {
 extension GameSceneController: SCNPhysicsContactDelegate {
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
         let alien = contact.nodeA is Alien ? contact.nodeA as! Alien : contact.nodeB as! Alien
-
-        if contact.nodeA is Tower || contact.nodeB is Tower {
-            let tower = contact.nodeA is Tower ? contact.nodeA as! Tower : contact.nodeB as! Tower
-            tower.startFire()
-            print("contato entre alien e torre começou")
-            return
-        }
         
         if contact.nodeA is Bullet || contact.nodeB is Bullet {
             let bullet = contact.nodeA is Bullet ? contact.nodeA as! Bullet : contact.nodeB as! Bullet
             bullet.removeFromParentNode()
-            alien.takeDamage(10)
+            alien.takeDamage(30)
             print("alien tomou tiro")
-            return
-        }
-    }
-
-    func physicsWorld(_ world: SCNPhysicsWorld, didEnd contact: SCNPhysicsContact) {
-        let alien = contact.nodeA is Alien ? contact.nodeA as! Alien : contact.nodeB as! Alien
-
-        if contact.nodeA is Tower || contact.nodeB is Tower {
-            let tower = contact.nodeA is Tower ? contact.nodeA as! Tower : contact.nodeB as! Tower
-            tower.stopFire()
-            print("contato entre alien e torre terminou")
             return
         }
     }
@@ -175,6 +161,7 @@ extension GameSceneController: SCNPhysicsContactDelegate {
         if contact.nodeA is Tower || contact.nodeB is Tower {
             let tower = contact.nodeA is Tower ? contact.nodeA as! Tower : contact.nodeB as! Tower
             tower.aimCannon(in: alien)
+            tower.startFire()
         }
     }
 }

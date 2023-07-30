@@ -129,9 +129,9 @@ class Tower: SCNNode {
         
         isFiring = true
         cannon.fire()
-    }
-    
-    func stopFire() {
-        isFiring = false
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7, execute: { // remove/replace ship after half a second to visualize collision
+            self.isFiring = false
+        })
     }
 }
