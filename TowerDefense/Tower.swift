@@ -33,26 +33,38 @@ case idle, wood1, wood2, base, bottom, middle, top, full
     }
 }
 
-class Tower {
-    var node: SCNNode!
+class Tower: SCNNode {
     var sceneNode: SCNNode!
     
     var level: TowerLevel = .idle
     
-    init(in sceneNode: SCNNode!) {
-        let towerNode = SCNNode()
+    var cannon: Cannon!
+    var isFiring = false
+    
+    static func create(in sceneNode: SCNNode!) {
+        let tower = Tower()
         
-        towerNode.name = "tower_base"
-        towerNode.position = SCNVector3(towerNode.position.x, towerNode.position.y + 0.2, towerNode.position.z)
+        tower.name = "tower_base"
+        tower.position = SCNVector3(tower.position.x, tower.position.y + 0.2, tower.position.z)
         
-        self.sceneNode = sceneNode
-        self.node = towerNode
+        tower.sceneNode = sceneNode
+        tower.setupPhysicsBody()
+        tower.setupGrowingAnimation()
+    }
+    
+    func setupPhysicsBody() {
+        let square = SCNBox(width: 3, height: 3, length: 3, chamferRadius: 0)
+        let shape = SCNPhysicsShape(geometry: square, options: nil)
+        self.physicsBody = SCNPhysicsBody(type: .dynamic, shape: shape)
+        self.physicsBody?.isAffectedByGravity = false
         
-        setupGrowingAnimation()
+        self.physicsBody?.categoryBitMask = CollisionCategory.tower.rawValue
+        self.physicsBody?.contactTestBitMask = CollisionCategory.alien.rawValue
+        self.physicsBody?.collisionBitMask = 0
     }
     
     func setupGrowingAnimation() {
-        sceneNode.addChildNode(node)
+        sceneNode.addChildNode(self)
         
         let firstWait = SCNAction.wait(duration: 0.05)
         let finalWait = SCNAction.wait(duration: 1)
@@ -89,7 +101,37 @@ class Tower {
             node.addChildNode(newNode)
         }
         
-        let sequence = SCNAction.sequence([firstWait, grow, timeBetweenAnimations, grow, timeBetweenAnimations, grow, timeBetweenAnimations, grow, timeBetweenAnimations, grow, timeBetweenAnimations, grow, finalWait, grow])
-        node.runAction(sequence)
+        let addCannon = SCNAction.run { node in
+            let cannon = Cannon.build()!
+            self.cannon = cannon
+            
+            cannon.position = SCNVector3(cannon.position.x, cannon.position.y + 1.3, cannon.position.z)
+            print("cannon position \(cannon.position)")
+            node.addChildNode(cannon)
+        }
+        
+        let sequence = SCNAction.sequence([firstWait, grow, timeBetweenAnimations, grow, timeBetweenAnimations, grow, timeBetweenAnimations, grow, timeBetweenAnimations, grow, timeBetweenAnimations, grow, finalWait, grow, addCannon])
+        self.runAction(sequence)
+    }
+    
+    func aimCannon(in alien: Alien) {
+        cannon.lockAim(in: alien)
+    }
+    
+    func stopCannonRotation() {
+        cannon.removeAllActions()
+    }
+    
+    func startFire() {
+        if isFiring {
+            return
+        }
+        
+        isFiring = true
+        cannon.fire()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7, execute: { // remove/replace ship after half a second to visualize collision
+            self.isFiring = false
+        })
     }
 }

@@ -32,8 +32,7 @@ enum AlienType {
     }
 }
 
-class Alien {
-    var node: SCNNode!
+class Alien: SCNNode {
     var lifeNode: SCNNode!
     var type: AlienType!
     var path: [SCNVector3] = []
@@ -42,37 +41,51 @@ class Alien {
     var fullHealth: Int!
     var health: Int!
     
-    init(of type: AlienType!, in sceneNode: SCNNode!) {
+    static func create(_ type: AlienType, in sceneNode: SCNNode!) -> Alien? {
         guard let alienScene = SCNScene(named: "art.scnassets/enemy_ufoPurple.scn") else {
-            return
+            return nil
         }
         guard let alienNode = alienScene.rootNode.childNodes.first else {
-            return
+            return nil
         }
-
-        self.type = type
-        self.node = alienNode
-        self.lifeNode = alienNode.childNode(withName: "life", recursively: false)
-        self.lifeNode.pivot = SCNMatrix4MakeTranslation(-0.5, 0, 0)
-        self.lifeNode.position = SCNVector3(-0.5, 0.5, 0)
-        self.lifeNode.isHidden = true
-        self.sceneNode = sceneNode
         
-        self.fullHealth = type.health
-        self.health = type.health
-
-        self.node.position = type.initialPosition
-        self.path = setupPath()
+        let alien = Alien()
+        alien.geometry = alienNode.geometry
         
-        startMovement()
+        for node in alienNode.childNodes {
+            alien.addChildNode(node)
+        }
+        
+        alien.setupPhysicsBody()
+        
+        alien.type = type
+        alien.lifeNode = alien.childNode(withName: "life", recursively: false)!
+        alien.lifeNode.pivot = SCNMatrix4MakeTranslation(-0.5, 0, 0)
+        alien.lifeNode.position = SCNVector3(-0.5, 0.5, 0)
+        alien.lifeNode.isHidden = true
+        alien.sceneNode = sceneNode
+        
+        alien.fullHealth = type.health
+        alien.health = type.health
+
+        alien.position = type.initialPosition
+        alien.path = alien.setupPath()
+        
+        alien.startMovement()
+        return alien
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    func setupPhysicsBody() {
+        let shape = SCNPhysicsShape(geometry: self.geometry!)
+        self.physicsBody = SCNPhysicsBody(type: .static, shape: shape)
+        
+        self.physicsBody?.categoryBitMask = CollisionCategory.alien.rawValue
+        self.physicsBody?.contactTestBitMask = CollisionCategory.tower.rawValue | CollisionCategory.bullet.rawValue
+        self.physicsBody?.collisionBitMask = CollisionCategory.bullet.rawValue
     }
     
     func setupPath() -> [SCNVector3]{
-        var pathNodeName = type.pathNodeName
+        let pathNodeName = type.pathNodeName
         var result: [SCNVector3] = []
         
         guard let pathNode = sceneNode.childNode(withName: pathNodeName, recursively: false) else {
@@ -95,7 +108,7 @@ class Alien {
         
         let sequence = SCNAction.sequence(moveActions)
         
-        node.runAction(sequence) {
+        self.runAction(sequence) {
             print("finalizou movimento -> explodir alien")
             self.takeDamage(self.health)
         }
@@ -103,6 +116,10 @@ class Alien {
     
     func takeDamage(_ damage: Int) {
         health = max(health - damage, 0)
+        
+        if health == 0 {
+            self.removeFromParentNode()
+        }
         
         lifeNode.isHidden = false
         let healthScale = Float(health)/Float(fullHealth)

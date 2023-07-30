@@ -15,6 +15,9 @@
 		7C24512E2A7010B5002F03DD /* GameLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C24512D2A7010B5002F03DD /* GameLevelView.swift */; };
 		7C5A97AD2A72A4AC00B0392B /* Terrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5A97AC2A72A4AC00B0392B /* Terrain.swift */; };
 		7C5A97AF2A73F90700B0392B /* Tower.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5A97AE2A73F90700B0392B /* Tower.swift */; };
+		7C5A97B12A759E5A00B0392B /* Cannon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5A97B02A759E5A00B0392B /* Cannon.swift */; };
+		7C5A97B32A759F1E00B0392B /* Bullet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5A97B22A759F1E00B0392B /* Bullet.swift */; };
+		7C5A97B52A759F6300B0392B /* CollisionCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5A97B42A759F6300B0392B /* CollisionCategory.swift */; };
 		7CE7F0D82A714D14004D839C /* GameManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE7F0D72A714D14004D839C /* GameManager.swift */; };
 		7CE7F0DA2A715AEA004D839C /* Alien.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE7F0D92A715AEA004D839C /* Alien.swift */; };
 /* End PBXBuildFile section */
@@ -29,6 +32,9 @@
 		7C24512D2A7010B5002F03DD /* GameLevelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLevelView.swift; sourceTree = "<group>"; };
 		7C5A97AC2A72A4AC00B0392B /* Terrain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Terrain.swift; sourceTree = "<group>"; };
 		7C5A97AE2A73F90700B0392B /* Tower.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tower.swift; sourceTree = "<group>"; };
+		7C5A97B02A759E5A00B0392B /* Cannon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cannon.swift; sourceTree = "<group>"; };
+		7C5A97B22A759F1E00B0392B /* Bullet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bullet.swift; sourceTree = "<group>"; };
+		7C5A97B42A759F6300B0392B /* CollisionCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollisionCategory.swift; sourceTree = "<group>"; };
 		7CE7F0D72A714D14004D839C /* GameManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameManager.swift; sourceTree = "<group>"; };
 		7CE7F0D92A715AEA004D839C /* Alien.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Alien.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -73,6 +79,9 @@
 				7CE7F0D92A715AEA004D839C /* Alien.swift */,
 				7C5A97AC2A72A4AC00B0392B /* Terrain.swift */,
 				7C5A97AE2A73F90700B0392B /* Tower.swift */,
+				7C5A97B02A759E5A00B0392B /* Cannon.swift */,
+				7C5A97B22A759F1E00B0392B /* Bullet.swift */,
+				7C5A97B42A759F6300B0392B /* CollisionCategory.swift */,
 			);
 			path = TowerDefense;
 			sourceTree = "<group>";
@@ -157,10 +166,13 @@
 			files = (
 				7C24511A2A700FA3002F03DD /* GameViewController.swift in Sources */,
 				7C5A97AD2A72A4AC00B0392B /* Terrain.swift in Sources */,
+				7C5A97B52A759F6300B0392B /* CollisionCategory.swift in Sources */,
 				7C24512B2A701061002F03DD /* ContentView.swift in Sources */,
 				7C2451292A701037002F03DD /* MyApp.swift in Sources */,
+				7C5A97B12A759E5A00B0392B /* Cannon.swift in Sources */,
 				7CE7F0DA2A715AEA004D839C /* Alien.swift in Sources */,
 				7C24512E2A7010B5002F03DD /* GameLevelView.swift in Sources */,
+				7C5A97B32A759F1E00B0392B /* Bullet.swift in Sources */,
 				7CE7F0D82A714D14004D839C /* GameManager.swift in Sources */,
 				7C5A97AF2A73F90700B0392B /* Tower.swift in Sources */,
 			);
