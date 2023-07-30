@@ -85,7 +85,7 @@ class Terrain {
     
     private func addTowerInTerrain(_ terrain: SCNNode) {
         // adiciona a torre
-        let _ = Tower(in: terrain)
+        let _ = Tower.create(in: terrain)
         
         // remove a redBox
         guard let clickable = terrain.childNode(withName: clickableName, recursively: false) else {
