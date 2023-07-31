@@ -16,6 +16,13 @@ struct GameLevelView: View {
             GameLevelViewRepresentable()
                 .ignoresSafeArea()
             
+            if !manager.hasStarted {
+                startButton
+                    .padding(.leading, 56)
+                    .padding(.top, 24)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            }
+            
             HStack(spacing: 24) {
                 editTerrainButton
                 fixCameraButton
@@ -50,6 +57,15 @@ struct GameLevelView: View {
             .foregroundColor(.white)
             .onTapGesture {
                 manager.editTerrain()
+            }
+    }
+    
+    var startButton: some View {
+        Image(systemName: "play.circle")
+            .font(.largeTitle)
+            .foregroundColor(.green)
+            .onTapGesture {
+                manager.startGame()
             }
     }
 }

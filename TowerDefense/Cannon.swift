@@ -53,7 +53,7 @@ class Cannon: SCNNode {
         bulletsNode.physicsBody?.applyForce(bulletDirection, asImpulse: true)
         self.fireSpot.addChildNode(bulletsNode)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2, execute: { // remove/replace ship after half a second to visualize collision
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { // remove/replace ship after half a second to visualize collision
             self.removeNodeWithAnimation(bulletsNode, explosion: false)
         })
     }

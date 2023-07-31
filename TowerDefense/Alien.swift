@@ -32,7 +32,9 @@ enum AlienType {
     }
 }
 
-class Alien: SCNNode {
+class Alien: SCNNode, Identifiable {
+    let id = UUID()
+    
     var lifeNode: SCNNode!
     var type: AlienType!
     var path: [SCNVector3] = []
@@ -40,6 +42,8 @@ class Alien: SCNNode {
     
     var fullHealth: Int!
     var health: Int!
+    
+    var isDead = false
     
     static func create(_ type: AlienType, in sceneNode: SCNNode!) -> Alien? {
         guard let alienScene = SCNScene(named: "art.scnassets/enemy_ufoPurple.scn") else {
@@ -76,8 +80,12 @@ class Alien: SCNNode {
     }
     
     func setupPhysicsBody() {
-        let shape = SCNPhysicsShape(geometry: self.geometry!)
+//        let shape = SCNPhysicsShape(geometry: self.geometry!)
+//        self.physicsBody = SCNPhysicsBody(type: .static, shape: shape)
+        let square = SCNBox(width: 1, height: 1, length: 1, chamferRadius: 0)
+        let shape = SCNPhysicsShape(geometry: square, options: nil)
         self.physicsBody = SCNPhysicsBody(type: .static, shape: shape)
+        self.physicsBody?.isAffectedByGravity = false
         
         self.physicsBody?.categoryBitMask = CollisionCategory.alien.rawValue
         self.physicsBody?.contactTestBitMask = CollisionCategory.tower.rawValue | CollisionCategory.bullet.rawValue
@@ -119,6 +127,7 @@ class Alien: SCNNode {
         
         if health == 0 {
             self.removeFromParentNode()
+            isDead = true
         }
         
         lifeNode.isHidden = false

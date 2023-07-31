@@ -35,6 +35,7 @@ case idle, wood1, wood2, base, bottom, middle, top, full
 
 class Tower: SCNNode {
     var sceneNode: SCNNode!
+    var target: Alien?
     
     var level: TowerLevel = .idle
     
@@ -53,7 +54,7 @@ class Tower: SCNNode {
     }
     
     func setupPhysicsBody() {
-        let square = SCNBox(width: 3, height: 3, length: 3, chamferRadius: 0)
+        let square = SCNBox(width: 3.5, height: 3, length: 3.5, chamferRadius: 0)
         let shape = SCNPhysicsShape(geometry: square, options: nil)
         self.physicsBody = SCNPhysicsBody(type: .dynamic, shape: shape)
         self.physicsBody?.isAffectedByGravity = false
@@ -67,7 +68,7 @@ class Tower: SCNNode {
         sceneNode.addChildNode(self)
         
         let firstWait = SCNAction.wait(duration: 0.05)
-        let finalWait = SCNAction.wait(duration: 1)
+        let finalWait = SCNAction.wait(duration: 0.5)
         let timeBetweenAnimations = SCNAction.wait(duration: 0.1)
         
         let grow = SCNAction.run { node in
@@ -114,12 +115,26 @@ class Tower: SCNNode {
         self.runAction(sequence)
     }
     
-    func aimCannon(in alien: Alien) {
-        cannon.lockAim(in: alien)
+    func lockCannon(on alien: Alien) {
+        target = alien
     }
     
-    func stopCannonRotation() {
-        cannon.removeAllActions()
+    func unlockCannon() {
+        target = nil
+    }
+    
+    func aimCannon() {
+        if target == nil {
+            return
+        }
+        
+        if target!.isDead {
+            print("target is dead -> Unlock")
+            unlockCannon()
+            return
+        }
+        
+        cannon.lockAim(in: target!)
     }
     
     func startFire() {
