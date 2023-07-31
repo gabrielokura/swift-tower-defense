@@ -50,13 +50,12 @@ class GameSceneController: UIViewController {
         self.scene = scene
         
         self.sceneView.showsStatistics = true
-        self.sceneView.debugOptions = [.showConstraints, .showSkeletons, .showPhysicsShapes]
+//        self.sceneView.debugOptions = [.showConstraints, .showSkeletons, .showPhysicsShapes]
         
         self.setupCamera()
         self.setupBackground()
         self.subscribeToFixedCameraEvents()
         self.subscribeToActions()
-        self.setupAliens()
         self.setupTerrain()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
@@ -79,8 +78,8 @@ class GameSceneController: UIViewController {
                 self.terrain.startEditing()
             case .finishEditing:
                 self.terrain.finishEditing()
-            default:
-                print("dont do anything")
+            case .start:
+                self.setupAliens()
             }
         }.store(in: &cancellableBag)
     }
@@ -113,7 +112,7 @@ class GameSceneController: UIViewController {
         let alien = Alien.create(.purple, in: self.scene.rootNode)!
         sceneView.scene?.rootNode.addChildNode(alien)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: { // remove/replace ship after half a second to visualize collision
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5, execute: { // remove/replace ship after half a second to visualize collision
             self.setupAliens()
         })
     }
@@ -149,18 +148,29 @@ extension GameSceneController: SCNPhysicsContactDelegate {
         if contact.nodeA is Bullet || contact.nodeB is Bullet {
             let bullet = contact.nodeA is Bullet ? contact.nodeA as! Bullet : contact.nodeB as! Bullet
             bullet.removeFromParentNode()
-            alien.takeDamage(30)
-            print("alien tomou tiro")
+            alien.takeDamage(40)
+            return
+        }
+        
+        if contact.nodeA is Tower || contact.nodeB is Tower {
+            let tower = contact.nodeA is Tower ? contact.nodeA as! Tower : contact.nodeB as! Tower
+            tower.lockCannon(on: alien)
+            return
+        }
+    }
+    
+    func physicsWorld(_ world: SCNPhysicsWorld, didEnd contact: SCNPhysicsContact) {
+        if contact.nodeA is Tower || contact.nodeB is Tower {
+            let tower = contact.nodeA is Tower ? contact.nodeA as! Tower : contact.nodeB as! Tower
+            tower.unlockCannon()
             return
         }
     }
     
     func physicsWorld(_ world: SCNPhysicsWorld, didUpdate contact: SCNPhysicsContact) {
-        let alien = contact.nodeA is Alien ? contact.nodeA as! Alien : contact.nodeB as! Alien
-        
         if contact.nodeA is Tower || contact.nodeB is Tower {
             let tower = contact.nodeA is Tower ? contact.nodeA as! Tower : contact.nodeB as! Tower
-            tower.aimCannon(in: alien)
+            tower.aimCannon()
             tower.startFire()
         }
     }

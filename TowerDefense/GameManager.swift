@@ -17,6 +17,7 @@ class Manager: ObservableObject {
     
     @Published var isCameraFixed: Bool = false
     @Published var isEditingTerrain: Bool = false
+    @Published var hasStarted: Bool = false
     
     var actionStream = PassthroughSubject<GameActions, Never>()
     
@@ -28,6 +29,11 @@ class Manager: ObservableObject {
     func editTerrain() {
         isEditingTerrain.toggle()
         actionStream.send(isEditingTerrain ? .startEditing : .finishEditing)
+    }
+    
+    func startGame() {
+        hasStarted = true
+        actionStream.send(.start)
     }
     
 }
